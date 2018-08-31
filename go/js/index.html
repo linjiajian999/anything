@@ -26,13 +26,20 @@ license that can be found in the LICENSE file.
 		WebAssembly.instantiateStreaming(fetch('wasm/index.wasm'), go.importObject).then(async (result) => {
 			mod = result.module;
 			inst = result.instance;
-			document.getElementById("runButton").disabled = false;
+			document.getElementById('runButton').disabled = false;
+			document.getElementById('sumButton').disabled = false;
 			await go.run(inst);
 			inst = await WebAssembly.instantiate(mod, go.importObject);
 		});
 	</script>
-
 	<button id="runButton" disabled>Run</button>
+	<h3>sum:</h3>
+	<div> a: <input id="aValue" type="number" value="1"></div>
+	<div>+ b: <input id="bValue" type="number" value="2"></div>
+	<div>+ c: <input id="cValue" type="number" value="3"></div>
+	<div>= sum: <input id="sum" type="number" ></div>
+	<button id="sumButton" disabled>calculate</button>
+	</div>
 </body>
 
 </html>

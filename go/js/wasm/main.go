@@ -1,22 +1,45 @@
 package main
 
 import (
+	"strconv"
 	"syscall/js"
 )
 
 func sum(args []js.Value) {
 	var sum int
-	for val := range args {
-		sum += args[val].Int()
+	for _, val := range args {
+		sum += val.Int()
 	}
 	println(sum)
 }
 func registerCallbacks() {
-	js.Global().Set("sum", js.NewCallback(sum))
-	run := js.NewCallback(func(args []js.Value) {
+	global := js.Global()
+	document := global.Get("document")
+
+	getElementById := func(id string) js.Value {
+		return document.Call("getElementById", id)
+	}
+	aValue := getElementById("aValue")
+	bValue := getElementById("bValue")
+	cValue := getElementById("cValue")
+	sumValue := getElementById("sum")
+
+	sumButton := getElementById("sumButton")
+	runButton := getElementById("runButton")
+
+	onRun := js.NewCallback(func(args []js.Value) {
 		println("button on click")
 	})
-	js.Global().Get("document").Call("getElementById", "runButton").Call("addEventListener", "click", run)
+	onSum := js.NewCallback(func(args []js.Value) {
+		a, _ := strconv.Atoi(aValue.Get("value").String())
+		b, _ := strconv.Atoi(bValue.Get("value").String())
+		c, _ := strconv.Atoi(cValue.Get("value").String())
+		sumValue.Set("value", js.ValueOf(a+b+c))
+	})
+
+	global.Set("sum", js.NewCallback(sum))
+	sumButton.Call("addEventListener", "click", onSum)
+	runButton.Call("addEventListener", "click", onRun)
 }
 
 func main() {
