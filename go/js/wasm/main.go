@@ -5,6 +5,15 @@ import (
 	"syscall/js"
 )
 
+func sum(this js.Value, args []js.Value) interface{} {
+	var sum int
+	for _, val := range args {
+		sum += val.Int()
+	}
+	println(sum)
+	return nil
+}
+
 func registerCallbacks() {
 	global := js.Global()
 	document := global.Get("document")
@@ -32,6 +41,7 @@ func registerCallbacks() {
 		return nil
 	})
 
+	global.Set("sum", js.FuncOf(sum))
 	sumButton.Call("addEventListener", "click", onSum)
 	runButton.Call("addEventListener", "click", onRun)
 }
